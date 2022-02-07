@@ -2,7 +2,7 @@ const mqtt = require('mqtt')
 const cron = require('node-cron');
 const con = require('./database.js')
 
-const host = '15.207.111.161'
+const host = '13.235.26.80'
 const port = '1883'
 const clientId = `mqtt_${Math.random().toString(16).slice(3)}`
 
@@ -15,13 +15,13 @@ const client = mqtt.connect(connectUrl, {
   password: 'public',
   reconnectPeriod: 1000,
 })
-const topic = 'User/Action'
+const topic = "REEVA/HYDROPHONICS/34B4724F22C4/Action"
 client.on('connect', () => {
   console.log('Connected')
-  client.subscribe("DHT12/Temp", () => {
+  client.subscribe("REEVA/HYDROPHONICS/34B4724F22C4/DHT12/Temp", () => {
     console.log(`Subscribe to topic '${topic}'`)
   })
-  client.subscribe("DHT12/Humidity", () => {
+  client.subscribe("REEVA/HYDROPHONICS/34B4724F22C4/DHT12/Humidity", () => {
     console.log(`Subscribe to topic '${topic}'`)
   })
 })
@@ -46,29 +46,29 @@ function getdata()
 
 }
 
-  client.on('message', (topic, payload) => {
-    
-    console.log(payload.toString())
-    if (topic === "DHT12/Temp") {
-      Temp = payload.toString();
-      flag++;
-    }
-    else if (topic === "DHT12/Humidity") {
-      humidity = payload.toString();
-      console.log(humidity)
-      flag++;
+    client.on('message', (topic, payload) => {
       
+      console.log(payload.toString())
+      if (topic === "REEVA/HYDROPHONICS/34B4724F22C4/DHT12/Temp") {
+        Temp = payload.toString();
+        flag++;
+      }
+      else if (topic === "REEVA/HYDROPHONICS/34B4724F22C4/DHT12/Humidity") {
+        humidity = payload.toString();
+        console.log(humidity)
+        flag++;
+        
 
+      }
+      console.log("flag",flag)
+
+    if (flag==2)
+    {
+      console.log(flag)
+      savedata(Temp, humidity)
     }
-    console.log("flag",flag)
 
-  if (flag==2)
-  {
-    console.log(flag)
-    savedata(Temp, humidity)
-  }
-
-  })
+    })
   
  
    
@@ -90,12 +90,32 @@ function savedata(Temp,humidity)
   console.log(date)
   var t2 = "53"
   var t3 = "54"
-  var sql = "INSERT INTO data (Temp,Humidity,EC,PH,Time,Date) VALUES (?,?,?,?,?,?);"
-  con.query(sql, [Temp, humidity, t2, t3,time,date], function (err, result) {
+  console.log(Temp)
+  if (Temp > 26) {
+    Fan = "ON"
+    console.log(Fan)
+    client.publish("REEVA/HYDROPHONICS/34B472504B4C/C/2", "ON:100", { qos: 0, retain: false }, (error) => {
+      if (error) {
+        console.error(error)
+      }
+    })
+  }
+  else {
+    Fan = "OFF"
+    client.publish("REEVA/HYDROPHONICS/34B472504B4C/C/2", "OFF:0", { qos: 0, retain: false }, (error) => {
+      if (error) {
+        console.error(error)
+      }
+    })
+  }
+  //Temp="22.0"
+  var sql = "INSERT INTO data (Temp,Humidity,EC,PH,Time,Date,Fan) VALUES (?,?,?,?,?,?,?);"
+  con.query(sql, [Temp, humidity, t2, t3,time,date,Fan], function (err, result) {
     if (err) throw err;
     console.log("1 record inserted");
   });
   time =0
+  Fan=""
   console.log(time)
 }
 
