@@ -72,7 +72,7 @@ function getdata()
   
  
    
-function savedata(Temp,humidity)
+function savedata(Temp,humidity,Pump)
 {
   var date_ob = new Date();
   flag = 0
