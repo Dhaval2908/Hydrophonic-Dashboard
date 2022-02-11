@@ -31,6 +31,7 @@
       background-color: green;
       box-shadow: 3px 3px 2px rgba(0, 150, 0, .8);
     }
+
     #btn-off {
       margin-top: 10px;
       padding: 2px;
@@ -56,7 +57,7 @@
       box-shadow: 3px 3px 2px rgba(102, 1, 1, 0.993);
     }
   </style>
-  
+
 </head>
 
 <body>
@@ -175,6 +176,48 @@
           </div>
           <div class="p-4 md:w-1/4 sm:w-1/2 w-full">
             <div class="border-2 border-gray-500 px-4 py-6 rounded-lg">
+              <div>
+                <h2>Control Water Pump</h2>
+                <form action="dashboard" method="post">
+                  <!-- <input type="submit" class="inline-flex items-center bg-gray-800 border-0 py-1 px-3 focus:outline-none hover:bg-gray-700 rounded text-base mt-4 md:mt-0" value="ON"> -->
+                  <button name="WaterPumpON" type="submit" id="btn" value="ON">
+                    ON
+                  </button>
+                  <button name="WaterPumpOFF" type="submit" id="btn-off" value="OFF">
+                    OFF
+                  </button>
+                </form>
+              </div>
+              <!-- <h2 class="title-font font-medium text-3xl text-white">
+                <%=data.Date %>
+              </h2>
+              <p class="leading-relaxed">Air Pump</p> -->
+            </div>
+
+          </div>
+          <div class="p-4 md:w-1/4 sm:w-1/2 w-full">
+            <div class="border-2 border-gray-500 px-4 py-6 rounded-lg">
+              <div>
+                <h2>Control Light</h2>
+                <form action="dashboard" method="post">
+                  <!-- <input type="submit" class="inline-flex items-center bg-gray-800 border-0 py-1 px-3 focus:outline-none hover:bg-gray-700 rounded text-base mt-4 md:mt-0" value="ON"> -->
+                  <button name="LightON" type="submit" id="btn" value="ON">
+                    ON
+                  </button>
+                  <button name="LightOFF" type="submit" id="btn-off" value="OFF">
+                    OFF
+                  </button>
+                </form>
+              </div>
+              <!-- <h2 class="title-font font-medium text-3xl text-white">
+                <%=data.Date %>
+              </h2>
+              <p class="leading-relaxed">Air Pump</p> -->
+            </div>
+
+          </div>
+          <div class="p-4 md:w-1/4 sm:w-1/2 w-full">
+            <div class="border-2 border-gray-500 px-4 py-6 rounded-lg">
 
               <h2 class="title-font font-medium text-3xl text-white">
                 <%=data.Fan %>
@@ -219,7 +262,7 @@
             <% } %>
     </div>
   </section>
-  
+
 
 </body>
 
