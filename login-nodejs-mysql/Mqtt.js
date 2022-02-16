@@ -2,7 +2,7 @@ const mqtt = require('mqtt')
 const cron = require('node-cron');
 const con = require('./database.js')
 
-const host = '13.235.26.80'
+const host = '65.0.177.31'
 const port = '1883'
 const clientId = `mqtt_${Math.random().toString(16).slice(3)}`
 
@@ -33,6 +33,22 @@ cron.schedule('0 */5 * * * *', () => {
   console.log("Calling")
   //  '0 */5 * * * *
   getdata();
+
+});
+cron.schedule('0 9 * * *', () => {
+
+  client.publish("REEVA/HYDROPHONICS/34B472504B4C/C/5", "ON:100", { qos: 0, retain: false }, (error) => {
+    if (error) {
+      console.error(error)
+    }
+  })
+});
+cron.schedule('0 21 * * *', () => {
+  client.publish("REEVA/HYDROPHONICS/34B472504B4C/C/5", "OFF:0", { qos: 0, retain: false }, (error) => {
+    if (error) {
+      console.error(error)
+    }
+  })
 
 });
 var Temp, humidity

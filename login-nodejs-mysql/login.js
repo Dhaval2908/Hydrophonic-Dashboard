@@ -3,9 +3,11 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const logger = require("morgan")
 var path = require('path');
-
+var cookieParser = require('cookie-parser');
+var jwt = require('jsonwebtoken');
 
 const app = express();
+app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(logger("dev"))
 app.use(bodyParser.urlencoded({ extended: false }))
@@ -15,6 +17,7 @@ app.use("/assets", express.static("assets"));
 
 const connection = require("./database");
 const client = require("./Mqtt");
+const { Console } = require("console");
 
 app.get("/", function (req, res) {
     res.redirect('/index1');
@@ -35,60 +38,77 @@ app.get('/index1', (req, res) => {
 app.post("/", function (req, res) {
     var username = req.body.username;
     var password = req.body.password;
-    connection.query("select * from test where username = ?", [username], (error, results, fields) => {
+
+    connection.query("select * from test where username = ? ", [username], function (error, results, fields) {
         console.log(results)
 
-        if (results.length < 0) {
-            res.render("index1", {
-                message: "User Does Not Exist"
-            });
-        }
-        else {
-            connection.query("select * from test where username = ? and password = ?", [username, password], function (error, results, fields) {
-                var data
-                if (results.length > 0) {
-
+        if (results.length > 0) {
+            results.forEach(data => {
+                if (data.password == password) {
+                    const token = jwt.sign({
+                        email: data.username,
+                    }, 'test secret', { expiresIn: '3m' });
+                    // Set session expiration to 3 hr.
+                    console.log(token)
+                    const expiresIn = 1 * 60 * 60 * 1000;
+                    const options = { maxAge: expiresIn, httpOnly: true };
+                    res.cookie('token', token, options);
+                    // res.cookie('id', user[0].id, options);
                     res.redirect("/dashboard")
-
-                } else {
+                }
+                else {
                     res.render("index1", {
                         message: "Password Does Not Match"
                     });
                 }
-                res.end();
-            })
+            });
+        }
+        else {
+            res.render("index1", {
+                message: "User Does not exist"
+            });
+        }
+
+
+
+    })
+})
+app.post("/test", function (req, res) {
+    var username = req.body.username;
+    var password = req.body.password;
+    var repassword = req.body.repassword;
+    connection.query("select * from test where username = ? ", [username], function (error, results, fields) {
+        if (results.length > 0) {
+            res.render("test", {
+                message: "User is already exist"
+            });
+        }
+        else {
+            if (password == repassword) {
+                connection.query("INSERT INTO test (username, password) VALUES (?, ?);", [username, password], function (error, results, fields) {
+                    if (results.length > 0) {
+                        res.render("/")
+
+                    }
+                    else {
+                        res.redirect("/");
+
+                    }
+                    res.end();
+                })
+            }
+            else {
+                res.render("test", {
+                    message: "Password Does Not Match"
+                });
+            }
         }
 
     })
 
 
 })
-app.post("/test", function (req, res) {
-    var username = req.body.username;
-    var password = req.body.password;
-    var repassword = req.body.repassword;
-    if (password == repassword) {
-        connection.query("INSERT INTO test (username, password) VALUES (?, ?);", [username, password], function (error, results, fields) {
-            if (results.length > 0) {
-                res.render("/")
-
-            }
-            else {
-                res.redirect("/");
-
-            }
-            res.end();
-        })
-    }
-    else {
-        res.render("test", {
-            message: "Password Does Not Match"
-        });
-    }
-
-
-})
-app.get("/dashboard", function (req, res) {
+app.get("/dashboard", isLoggedIn, function (req, res) {
     var sql = 'SELECT * FROM data ORDER BY Date DESC , Time DESC Limit 1';
     connection.query(sql, function (err, d, fields) {
         console.log(d)
@@ -185,25 +205,64 @@ app.post("/dashboard", function (req, res) {
 
 
 })
-client.on('message', (topic, payload) => {
-    //console.log("1234")
-    app.use(function(req,res){
-        console.log("1234")
-        var sql = 'SELECT * FROM data ORDER BY Date DESC , Time DESC Limit 1';
-        connection.query(sql, function (err, d, fields) {
-            console.log(d)
-            data = d
+app.get("/schedule", isLoggedIn, function (req, res) {
 
 
-            res.render("dashboard", {
-                userData: data,
-            });
 
-        })
-    })
-  
-  })
+    res.render("schedule");
 
-app.listen(4000,()=>{
+
+
+})
+let StartTime,Temp
+app.post("/schedule", isLoggedIn, function (req, res) {
+    StartTime = req.body.starttime
+    var date_ob = new Date();
+    let minute = String(date_ob.getMinutes()).padStart(2, '0');
+    time = date_ob.getHours() + ':' + minute;
+    res.render("schedule");
+    
+
+
+
+})
+function isLoggedIn(req, res, next) {   //To verify an incoming token from client
+    console.log(req.cookies.token);
+    try {
+        console.log(req.cookies.token);
+        jwt.verify(req.cookies.token, 'test secret');
+        return next();
+    }
+    catch (err) {
+        console.log(err.message);
+        return res.status(401).render('index1', {  //401 Unauthorized Accesss
+            message: 'Please Login Again'
+        });
+    }
+}
+
+setInterval(() => {
+    console.log("btf",StartTime)
+    Temp=StartTime
+    if (StartTime) {
+        Temp = Temp.split(":");
+        var date_ob = new Date();
+        let minute = String(date_ob.getMinutes()).padStart(2, '0');
+
+
+        diff = parseInt(Temp[0]) + parseInt(Temp[1]) - parseInt(minute) - date_ob.getHours()
+        console.log(diff)
+        if (diff > 0) {
+            console.log("OFF")
+        }
+        else {
+            console.log("ON")
+        }
+    }
+}, 60*1000)
+
+
+
+app.listen(4000, () => {
     console.log(`server started 4000`)
 });

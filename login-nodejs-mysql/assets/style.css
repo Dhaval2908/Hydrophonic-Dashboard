@@ -14,7 +14,7 @@ body{
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    background: linear-gradient(-45deg,#7f379b,#ffa26c);
+    background: #001933;
 }
 
 .box{
@@ -62,7 +62,7 @@ body{
     width: 190px;
     height: 70px;
     border-radius: 50px;
-    background: linear-gradient(-90deg,#7f379b,#ff92a6);
+    background: linear-gradient(-90deg,#da1111,#ff92a6);
     transform: rotate(45deg);
     position: absolute;
     bottom: 70px;
