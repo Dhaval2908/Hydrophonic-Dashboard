@@ -47,11 +47,12 @@ app.post("/", function (req, res) {
                 if (data.password == password) {
                     const token = jwt.sign({
                         email: data.username,
-                    }, 'test secret', { expiresIn: '3m' });
+                    }, 'test secret', { expiresIn: '3h' });
                     // Set session expiration to 3 hr.
                     console.log(token)
-                    const expiresIn = 1 * 60 * 60 * 1000;
-                    const options = { maxAge: expiresIn, httpOnly: true };
+                    const expiresIn = 60 * 60* 3 * 1000;
+                    console.log(60*60*3*1000)
+                    const options = { maxAge: 60 * 60* 3 * 1000 , httpOnly: true };
                     res.cookie('token', token, options);
                     // res.cookie('id', user[0].id, options);
                     res.redirect("/dashboard")
@@ -214,9 +215,20 @@ app.get("/schedule", isLoggedIn, function (req, res) {
 
 
 })
-let StartTime,Temp
+let StartTime,Temp,EndTime,Temp2
 app.post("/schedule", isLoggedIn, function (req, res) {
     StartTime = req.body.starttime
+    EndTime = req.body.endtime
+    Temp=StartTime
+    Temp2=EndTime
+    Temp = Temp.split(":");
+    Temp2 = Temp2.split(":");
+    valid = parseInt(Temp[0]) + parseInt(Temp[1]) -parseInt(Temp2[0])-parseInt(Temp2[1])
+    console.log("Valid:",valid)
+    if(valid>=0)
+    {
+        console.log("ERROR")
+    }
     var date_ob = new Date();
     let minute = String(date_ob.getMinutes()).padStart(2, '0');
     time = date_ob.getHours() + ':' + minute;
@@ -242,24 +254,29 @@ function isLoggedIn(req, res, next) {   //To verify an incoming token from clien
 }
 
 setInterval(() => {
-    console.log("btf",StartTime)
+    console.log("StartTime:",StartTime)
+    console.log("EndTime:",EndTime)
     Temp=StartTime
+    Temp2=EndTime
     if (StartTime) {
         Temp = Temp.split(":");
+        Temp2 = Temp2.split(":");
         var date_ob = new Date();
         let minute = String(date_ob.getMinutes()).padStart(2, '0');
 
 
         diff = parseInt(Temp[0]) + parseInt(Temp[1]) - parseInt(minute) - date_ob.getHours()
-        console.log(diff)
-        if (diff > 0) {
+        diff2 = parseInt(Temp2[0]) + parseInt(Temp2[1]) - parseInt(minute) - date_ob.getHours()
+        console.log(diff2)
+        if (diff > 0 || diff2 <= 0) {
             console.log("OFF")
         }
         else {
             console.log("ON")
         }
+        
     }
-}, 60*1000)
+},10000)
 
 
 
