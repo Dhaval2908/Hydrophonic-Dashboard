@@ -1,16 +1,121 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://unpkg.com/tailwingdcss@^1.0/dist/tailwind.min.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+
+
+</head>
+
 <body>
 
-<form action="schedule" method="POST">
-  <label >Start Time:</label>
-  <input type="time" id="appt" name="starttime" required>
-  <label >End Time:</label>
-  <input type="time" id="appt" name="endtime" required>
-  <input type="submit">
-</form>
+  <header class="text-gray-400 bg-gray-900 body-font">
+    <div class="container mx-auto flex flex-wrap p-5 flex-col md:flex-row items-center">
+      <a class="flex title-font font-medium items-center text-white mb-4 md:mb-0">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round"
+          stroke-linejoin="round" stroke-width="2" class="w-10 h-10 text-white p-2 bg-indigo-500 rounded-full"
+          viewBox="0 0 24 24">
+          <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+        </svg>
+        <span class="ml-3 text-xl">Hydrophonics</span>
+      </a>
+      <nav class="md:ml-auto flex flex-wrap items-center text-base justify-center">
+        <a href="dashboard" class="mr-5 hover:text-white">DashBoard</a>
+        <a class="mr-5 hover:text-white">Analysis</a>
+        <a class="mr-5 hover:text-white">Log out</a>
+        <a class="mr-5 hover:text-white"></a>
+      </nav>
+      <form action="dashboard" method="post">
+        <input type="submit"
+          class="inline-flex items-center bg-gray-800 border-0 py-1 px-3 focus:outline-none hover:bg-gray-700 rounded text-base mt-4 md:mt-0"
+          value="Refresh">
+      </form>
+      <!-- <button class="inline-flex items-center bg-gray-800 border-0 py-1 px-3 focus:outline-none hover:bg-gray-700 rounded text-base mt-4 md:mt-0">Refresh
+            
+            </svg>
+          </button> -->
+    </div>
+  </header>
+
+  <section class="text-gray-400 bg-gray-900 body-font">
+
+    <div
+      class="flex lg:w-2/3 w-full sm:flex-row flex-col mx-auto px-8 sm:px-0 items-end sm:space-x-4 sm:space-y-0 space-y-4">
+      <form action="schedule" method="POST">
+        <div class="relative sm:mb-0 flex-grow w-full">
+          <label for="full-name" class="leading-7 text-sm text-gray-400">Start Time:</label>
+          <input type="time" id="appt" name="starttime"
+            class="w-full bg-gray-800 bg-opacity-40 rounded border border-gray-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-900 focus:bg-transparent text-base outline-none text-gray-100 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
+        </div>
+        <div class="relative sm:mb-0 flex-grow w-full">
+          <label for="email" class="leading-7 text-sm text-gray-400">End Time:</label>
+          <input type="time" id="appt" name="endtime"
+            class="w-full bg-gray-800 bg-opacity-40 rounded border border-gray-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-900 focus:bg-transparent text-base outline-none text-gray-100 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
+        </div>
+        <button type="submit"
+          class="text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg">Submit</button>
+    </div>
+    </form>
+    </div>
+  </section>
+  <section>
+    <div>
+      <% if(ScheduleData.length!=0){ var i=1; ScheduleData.forEach(function(data){ %>
+        <table border="1">
+        <% if(i==1){ %>
+        
+        
+            <tr>
+              <th>S.N</th>
+              <th>Temp</th>
+              <th>Humidity</th>
+              <th>DELETE</th>
+    
+    
+            </tr>
+            <% } %>
+      
+
+        
+          <tr>
+            <td>
+              <%=i; %>
+            </td>
+            <td>
+              <%=data.StartTime %>
+            </td>
+            <td>
+              <%=data.EndTime %>
+            </td>
+            <td>
+              <form action="/delete?StartTime=<%=data.StartTime %>" method="post">
+
+                <button type="submit">DELETE </button>
+
+              </form>
+            </td>
+
+
+
+
+            <!-- <td><a href="/users/edit/<%=data.id%>">Edit</a></td>
+          <td><a href="/users/delete/<%=data.id%>">Delete</a></td> -->
+          </tr>
+          <% i++; }) %>
+            <% } else{ %>
+              <tr>
+                <td colspan="7">Create New Schedule</td>
+              </tr>
+              <% } %>
+      </table>
+    </div>
+  </section>
 
 
 
 </body>
+
 </html>

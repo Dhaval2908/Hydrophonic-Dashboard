@@ -5,6 +5,7 @@ const logger = require("morgan")
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var jwt = require('jsonwebtoken');
+var fs = require('fs');
 
 const app = express();
 app.use(cookieParser());
@@ -15,6 +16,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 app.use("/assets", express.static("assets"));
 
+const schedule=require("./schedule")
 const connection = require("./database");
 const client = require("./Mqtt");
 const { Console } = require("console");
@@ -50,9 +52,9 @@ app.post("/", function (req, res) {
                     }, 'test secret', { expiresIn: '3h' });
                     // Set session expiration to 3 hr.
                     console.log(token)
-                    const expiresIn = 60 * 60* 3 * 1000;
-                    console.log(60*60*3*1000)
-                    const options = { maxAge: 60 * 60* 3 * 1000 , httpOnly: true };
+                    const expiresIn = 60 * 60 * 3 * 1000;
+                    console.log(60 * 60 * 3 * 1000)
+                    const options = { maxAge: 60 * 60 * 3 * 1000, httpOnly: true };
                     res.cookie('token', token, options);
                     // res.cookie('id', user[0].id, options);
                     res.redirect("/dashboard")
@@ -209,8 +211,28 @@ app.post("/dashboard", function (req, res) {
 app.get("/schedule", isLoggedIn, function (req, res) {
 
 
+    const fileData = fs.readFileSync("schedule.json", 'utf8');
+    console.log("LEngth",fileData.length)
+    // if(fileData.length === 0)
+    // {
+    //     console.log("f")
+    //    fs.writeFileSync("schedule.json", JSON.stringify([], null, 2))
+    
+    // }
+    // setTimeout(function () {
+        
+    //     const object = JSON.parse(fileData)
+    //     res.render("schedule", {
+    //         ScheduleData: object
+    //     });
+    // }, 10);
+    const object = JSON.parse(fileData) 
+        
+         res.render("schedule", {
+             ScheduleData: object
+         });
+    
 
-    res.render("schedule");
 
 
 
@@ -219,21 +241,49 @@ let StartTime,Temp,EndTime,Temp2
 app.post("/schedule", isLoggedIn, function (req, res) {
     StartTime = req.body.starttime
     EndTime = req.body.endtime
-    Temp=StartTime
-    Temp2=EndTime
-    Temp = Temp.split(":");
+    Temp = StartTime
+    Temp2 = EndTime
+    Temp = StartTime.split(":");
+    console.log(typeof(Temp))
     Temp2 = Temp2.split(":");
-    valid = parseInt(Temp[0]) + parseInt(Temp[1]) -parseInt(Temp2[0])-parseInt(Temp2[1])
-    console.log("Valid:",valid)
-    if(valid>=0)
-    {
+    valid = parseInt(StartTime[0]) + parseInt(StartTime[1]) - parseInt(Temp2[0]) - parseInt(Temp2[1])
+    console.log("Valid:", valid)
+    if (valid >= 0) {
         console.log("ERROR")
     }
     var date_ob = new Date();
     let minute = String(date_ob.getMinutes()).padStart(2, '0');
     time = date_ob.getHours() + ':' + minute;
-    res.render("schedule");
+    const fileData = fs.readFileSync("schedule.json", 'utf8');
     
+    const object = JSON.parse(fileData)
+    if (object.length === 0) {
+
+        fs.writeFileSync("schedule.json", JSON.stringify([{ StartTime: StartTime, EndTime: EndTime }], null, 2))
+    } else {
+
+        object.push({ StartTime: StartTime, EndTime: EndTime })
+        fs.writeFileSync("schedule.json", JSON.stringify(object, null, 2))
+
+    }
+    // obj.table.push({StartTime:StartTime,EndTime:EndTime})
+
+    // fs.appendFileSync('schedule.json', JSON.stringify(obj)  ,(err) => {
+    //     if (err)
+    //       console.log(err);
+    //     else {
+    //       console.log("File written successfully\n");
+    //       console.log("The written has the following contents:");
+
+    //     }
+    // })
+    // setTimeout(function () {
+    //     res.render("schedule",{
+    //         ScheduleData:object
+    //     });
+    // }, 500);
+   res.redirect("/schedule")
+
 
 
 
@@ -252,31 +302,52 @@ function isLoggedIn(req, res, next) {   //To verify an incoming token from clien
         });
     }
 }
-
-setInterval(() => {
-    console.log("StartTime:",StartTime)
-    console.log("EndTime:",EndTime)
-    Temp=StartTime
-    Temp2=EndTime
-    if (StartTime) {
-        Temp = Temp.split(":");
-        Temp2 = Temp2.split(":");
-        var date_ob = new Date();
-        let minute = String(date_ob.getMinutes()).padStart(2, '0');
-
-
-        diff = parseInt(Temp[0]) + parseInt(Temp[1]) - parseInt(minute) - date_ob.getHours()
-        diff2 = parseInt(Temp2[0]) + parseInt(Temp2[1]) - parseInt(minute) - date_ob.getHours()
-        console.log(diff2)
-        if (diff > 0 || diff2 <= 0) {
-            console.log("OFF")
+app.post("/delete", isLoggedIn, function (req, res) {
+    console.log(req.query.StartTime)
+    Temp=req.query.StartTime
+    Temp = Temp.split(":");
+    const fileData = fs.readFileSync(`schedule.json`, 'utf8');
+        const object = JSON.parse(fileData)
+        for(var i = 0, max = object.length; i < max; i++) {
+            var a = object[i];
+            Temp2=a.StartTime
+            Temp2 = Temp2.split(":");
+            if(Temp[0]==Temp2[0] || Temp[1]==Temp2[1]) {
+                object.splice(i, 1);
+                break;
+            }
         }
-        else {
-            console.log("ON")
-        }
-        
-    }
-},10000)
+        fs.writeFileSync("schedule.json", JSON.stringify(object, null, 2))
+   res.redirect("/schedule")
+
+
+
+
+})
+// setInterval(() => {
+//     console.log("StartTime:",StartTime)
+//     console.log("EndTime:",EndTime)
+//     Temp=StartTime
+//     Temp2=EndTime
+//     if (StartTime) {
+//         Temp = Temp.split(":");
+//         Temp2 = Temp2.split(":");
+//         var date_ob = new Date();
+//         let minute = String(date_ob.getMinutes()).padStart(2, '0');
+
+
+//         diff = parseInt(Temp[0]) + parseInt(Temp[1]) - parseInt(minute) - date_ob.getHours()
+//         diff2 = parseInt(Temp2[0]) + parseInt(Temp2[1]) - parseInt(minute) - date_ob.getHours()
+//         console.log(diff2)
+//         if (diff > 0 || diff2 <= 0) {
+//             console.log("OFF")
+//         }
+//         else {
+//             console.log("ON")
+//         }
+
+//     }
+//     },10000)
 
 
 
