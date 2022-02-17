@@ -85,13 +85,13 @@
               <%=i; %>
             </td>
             <td>
-              <%=data.StartTime %>
+              <%=data.StartHr %>:<%=data.StartMin %>
             </td>
             <td>
-              <%=data.EndTime %>
+              <%=data.EndHr %>:<%=data.EndMin %>
             </td>
             <td>
-              <form action="/delete?StartTime=<%=data.StartTime %>" method="post">
+              <form action="/delete?StartHr=<%=data.StartHr %>&StartMin=<%=data.StartMin %>" method="post">
 
                 <button type="submit">DELETE </button>
 

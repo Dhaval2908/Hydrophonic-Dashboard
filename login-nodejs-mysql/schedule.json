@@ -1,18 +1,8 @@
 [
   {
-    "StartTime": "16:42",
-    "EndTime": "16:43"
-  },
-  {
-    "StartTime": "16:45",
-    "EndTime": "16:43"
-  },
-  {
-    "StartTime": "16:44",
-    "EndTime": "16:44"
-  },
-  {
-    "StartTime": "16:45",
-    "EndTime": "16:45"
+    "StartHr": "17",
+    "StartMin": "48",
+    "EndHr": "17",
+    "EndMin": "51"
   }
 ]

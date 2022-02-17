@@ -16,7 +16,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 app.use("/assets", express.static("assets"));
 
-const schedule=require("./schedule")
+const schedule = require("./schedule")
 const connection = require("./database");
 const client = require("./Mqtt");
 const { Console } = require("console");
@@ -212,41 +212,39 @@ app.get("/schedule", isLoggedIn, function (req, res) {
 
 
     const fileData = fs.readFileSync("schedule.json", 'utf8');
-    console.log("LEngth",fileData.length)
+    console.log("LEngth", fileData.length)
     // if(fileData.length === 0)
     // {
     //     console.log("f")
     //    fs.writeFileSync("schedule.json", JSON.stringify([], null, 2))
-    
+
     // }
     // setTimeout(function () {
-        
+
     //     const object = JSON.parse(fileData)
     //     res.render("schedule", {
     //         ScheduleData: object
     //     });
     // }, 10);
-    const object = JSON.parse(fileData) 
-        
-         res.render("schedule", {
-             ScheduleData: object
-         });
-    
+    const object = JSON.parse(fileData)
+
+    res.render("schedule", {
+        ScheduleData: object
+    });
+
 
 
 
 
 })
-let StartTime,Temp,EndTime,Temp2
+
 app.post("/schedule", isLoggedIn, function (req, res) {
     StartTime = req.body.starttime
     EndTime = req.body.endtime
-    Temp = StartTime
-    Temp2 = EndTime
-    Temp = StartTime.split(":");
-    console.log(typeof(Temp))
-    Temp2 = Temp2.split(":");
-    valid = parseInt(StartTime[0]) + parseInt(StartTime[1]) - parseInt(Temp2[0]) - parseInt(Temp2[1])
+
+    StartTime = StartTime.split(":");
+    EndTime = EndTime.split(":");
+    valid = parseInt(StartTime[0]) + parseInt(StartTime[1]) - parseInt(EndTime[0]) - parseInt(EndTime[1])
     console.log("Valid:", valid)
     if (valid >= 0) {
         console.log("ERROR")
@@ -255,14 +253,14 @@ app.post("/schedule", isLoggedIn, function (req, res) {
     let minute = String(date_ob.getMinutes()).padStart(2, '0');
     time = date_ob.getHours() + ':' + minute;
     const fileData = fs.readFileSync("schedule.json", 'utf8');
-    
+
     const object = JSON.parse(fileData)
     if (object.length === 0) {
 
-        fs.writeFileSync("schedule.json", JSON.stringify([{ StartTime: StartTime, EndTime: EndTime }], null, 2))
+        fs.writeFileSync("schedule.json", JSON.stringify([{ StartHr: StartTime[0], StartMin: StartTime[1], EndHr: EndTime[0], EndMin: EndTime[1] }], null, 2))
     } else {
 
-        object.push({ StartTime: StartTime, EndTime: EndTime })
+        object.push({ StartHr: StartTime[0], StartMin: StartTime[1], EndHr: EndTime[0], EndMin: EndTime[1] })
         fs.writeFileSync("schedule.json", JSON.stringify(object, null, 2))
 
     }
@@ -282,7 +280,7 @@ app.post("/schedule", isLoggedIn, function (req, res) {
     //         ScheduleData:object
     //     });
     // }, 500);
-   res.redirect("/schedule")
+    res.redirect("/schedule")
 
 
 
@@ -303,22 +301,17 @@ function isLoggedIn(req, res, next) {   //To verify an incoming token from clien
     }
 }
 app.post("/delete", isLoggedIn, function (req, res) {
-    console.log(req.query.StartTime)
-    Temp=req.query.StartTime
-    Temp = Temp.split(":");
+
     const fileData = fs.readFileSync(`schedule.json`, 'utf8');
-        const object = JSON.parse(fileData)
-        for(var i = 0, max = object.length; i < max; i++) {
-            var a = object[i];
-            Temp2=a.StartTime
-            Temp2 = Temp2.split(":");
-            if(Temp[0]==Temp2[0] || Temp[1]==Temp2[1]) {
-                object.splice(i, 1);
-                break;
-            }
-        }
-        fs.writeFileSync("schedule.json", JSON.stringify(object, null, 2))
-   res.redirect("/schedule")
+    const object = JSON.parse(fileData)
+
+    index = object.findIndex(object => object.StartHr == req.query.StartHr && object.StartMin == req.query.StartMin)
+
+    object.splice(index, 1)
+    fs.writeFileSync("schedule.json", JSON.stringify(object, null, 2))
+
+
+    res.redirect("/schedule")
 
 
 
