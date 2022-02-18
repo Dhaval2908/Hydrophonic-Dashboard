@@ -62,55 +62,64 @@
     </div>
   </section>
   <section>
-    <div>
-      <% if(ScheduleData.length!=0){ var i=1; ScheduleData.forEach(function(data){ %>
-        <table border="1">
-        <% if(i==1){ %>
-        
-        
-            <tr>
-              <th>S.N</th>
-              <th>Temp</th>
-              <th>Humidity</th>
-              <th>DELETE</th>
     
-    
-            </tr>
-            <% } %>
-      
+      <div class="flex flex-col">
+        <div class="overflow-x-auto sm:-mx-6 lg:-mx-8">
+          <div class="py-4 inline-block min-w-full sm:px-6 lg:px-8">
+            <div class="overflow-hidden">
+              <% if(ScheduleData.length!=0){ var i=1; ScheduleData.forEach(function(data){ %>
+              <table class="min-w-full text-center">
+                <% if(i==1){ %>
+                <thead class="border-b bg-gray-800">
+                  <tr>
+                    <th scope="col" class="text-sm font-medium text-white px-6 py-4">
+                      No.
+                    </th>
+                    <th scope="col" class="text-sm font-medium text-white px-6 py-4">
+                      Start Time
+                    </th>
+                    <th scope="col" class="text-sm font-medium text-white px-6 py-4">
+                      End Time
+                    </th>
+                    <th scope="col" class="text-sm font-medium text-white px-6 py-4">
+                      Delete
+                    </th>
+                  </tr>
+                </thead class="border-b">
+                <% } %>
+                <tbody>
+                  <% if(i%2 == 0){ %>
+                    <tr class="bg-gray-100 border-b">
+                  <% } else{ %>
+                  <tr class="bg-white border-b">
+                    <% } %>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"><%=i%></td>
+                    <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
+                      <%=data.StartHr %>:<%=data.StartMin %>
+                    </td>
+                    <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
+                      <%=data.EndHr %>:<%=data.EndMin %>
+                    </td>
+                    <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
+                      <form action="/delete?StartHr=<%=data.StartHr %>&StartMin=<%=data.StartMin %>" method="post">
 
+                        <button type="submit" class="bg-red-400 hover:bg-red-500">Remove </button>
         
-          <tr>
-            <td>
-              <%=i; %>
-            </td>
-            <td>
-              <%=data.StartHr %>:<%=data.StartMin %>
-            </td>
-            <td>
-              <%=data.EndHr %>:<%=data.EndMin %>
-            </td>
-            <td>
-              <form action="/delete?StartHr=<%=data.StartHr %>&StartMin=<%=data.StartMin %>" method="post">
-
-                <button type="submit">DELETE </button>
-
-              </form>
-            </td>
-
-
-
-
-            <!-- <td><a href="/users/edit/<%=data.id%>">Edit</a></td>
-          <td><a href="/users/delete/<%=data.id%>">Delete</a></td> -->
-          </tr>
-          <% i++; }) %>
+                      </form>
+                    </td>
+                  </tr>
+                  <% i++; }) %>
             <% } else{ %>
-              <tr>
-                <td colspan="7">Create New Schedule</td>
+              <tr class="bg-white border-b">
+                <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap" colspan="4">Create New Schedule</td>
               </tr>
               <% } %>
-      </table>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 
