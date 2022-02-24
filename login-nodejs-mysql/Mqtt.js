@@ -1,8 +1,9 @@
 const mqtt = require('mqtt')
 const cron = require('node-cron');
 const con = require('./database.js')
+const fs = require("fs");
 
-const host = '65.0.177.31'
+const host = '13.235.26.80'
 const port = '1883'
 const clientId = `mqtt_${Math.random().toString(16).slice(3)}`
 
@@ -35,22 +36,7 @@ cron.schedule('0 */5 * * * *', () => {
   getdata();
 
 });
-cron.schedule('0 9 * * *', () => {
 
-  client.publish("REEVA/HYDROPHONICS/34B472504B4C/C/5", "ON:100", { qos: 0, retain: false }, (error) => {
-    if (error) {
-      console.error(error)
-    }
-  })
-});
-cron.schedule('0 21 * * *', () => {
-  client.publish("REEVA/HYDROPHONICS/34B472504B4C/C/5", "OFF:0", { qos: 0, retain: false }, (error) => {
-    if (error) {
-      console.error(error)
-    }
-  })
-
-});
 var Temp, humidity
 function getdata() {
   client.publish(topic, "1", { qos: 0, retain: false }, (error) => {
@@ -66,21 +52,17 @@ client.on('message', (topic, payload) => {
   console.log(payload.toString())
   if (topic === "REEVA/HYDROPHONICS/34B4724F22C4/DHT12/Temp") {
     Temp = payload.toString();
-    flag++;
+  
   }
   else if (topic === "REEVA/HYDROPHONICS/34B4724F22C4/DHT12/Humidity") {
     humidity = payload.toString();
     console.log(humidity)
-    flag++;
-
-
   }
-  console.log("flag", flag)
+  setTimeout(() => {
+    savedata(Temp,humidity)
+  }, 100);
 
-  if (flag == 2) {
-    console.log(flag)
-    savedata(Temp, humidity)
-  }
+ 
 
 })
 
@@ -127,6 +109,12 @@ function savedata(Temp, humidity, Pump) {
     if (err) throw err;
     console.log("1 record inserted");
   });
+
+  // const fileData = fs.readFileSync("data.json", 'utf8');
+  // const object = JSON.parse(fileData)
+  fs.writeFileSync("data.json", JSON.stringify([{Temp:Temp,Humidity:humidity,EC:t2,PH:t3,Time:time,Date:date,Fan:Fan}], null, 2))
+
+
   time = 0
   Fan = ""
   console.log(time)

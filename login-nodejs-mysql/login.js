@@ -1,6 +1,7 @@
 const mysql = require("mysql");
 const express = require("express");
 const bodyParser = require("body-parser");
+const encoder = bodyParser.urlencoded();
 const logger = require("morgan")
 var path = require('path');
 var cookieParser = require('cookie-parser');
@@ -112,19 +113,21 @@ app.post("/test", function (req, res) {
 
 })
 app.get("/dashboard", isLoggedIn, function (req, res) {
-    var sql = 'SELECT * FROM data ORDER BY Date DESC , Time DESC Limit 1';
-    connection.query(sql, function (err, d, fields) {
-        console.log(d)
-        data = d
-
+    // var sql = 'SELECT * FROM data ORDER BY Date DESC , Time DESC Limit 1';
+    // connection.query(sql, function (err, d, fields) {
+    //     console.log(d)
+    //     data = d
+    const fileData = fs.readFileSync("data.json", 'utf8');
+    const object = JSON.parse(fileData)
 
         res.render("dashboard", {
-            userData: data,
+            userData: object,
+            status:"OFF"
         });
 
     })
 
-})
+// })
 
 app.post("/dashboard", function (req, res) {
     var AirPumpON = req.body.AirPumpON;
@@ -144,6 +147,7 @@ app.post("/dashboard", function (req, res) {
         console.log(AirPumpON)
         if (AirPumpON) {
             console.log("t")
+           let  s="ON"
             client.publish("REEVA/HYDROPHONICS/34B472504B4C/C/1", "ON:100", { qos: 0, retain: false }, (error) => {
                 if (error) {
                     console.error(error)
@@ -152,6 +156,7 @@ app.post("/dashboard", function (req, res) {
 
         }
         if (AirPumpOFF) {
+            let  s="OFF"
             client.publish("REEVA/HYDROPHONICS/34B472504B4C/C/1", "OFF:0", { qos: 0, retain: false }, (error) => {
                 if (error) {
                     console.error(error)
@@ -192,17 +197,26 @@ app.post("/dashboard", function (req, res) {
                 }
             })
         }
-        var sql = 'SELECT * FROM data ORDER BY Date DESC , Time DESC Limit 1';
-        connection.query(sql, function (err, d, fields) {
-            console.log(d)
-            data = d
+        // var sql = 'SELECT * FROM data ORDER BY Date DESC , Time DESC Limit 1';
+        // connection.query(sql, function (err, d, fields) {
+        //     console.log(d)
+        //     data = d
 
 
+        //     res.render("dashboard", {
+        //         userData: data,
+        //     });
+
+        // })
+        const fileData = fs.readFileSync("data.json", 'utf8');
+        const object = JSON.parse(fileData)
+    
             res.render("dashboard", {
-                userData: data,
+                userData: object,
+                status:s
             });
-
-        })
+    
+       
     }, 500);
 
 

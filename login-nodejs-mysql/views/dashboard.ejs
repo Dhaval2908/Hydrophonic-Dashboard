@@ -7,6 +7,107 @@
   <link rel="stylesheet" href="https://unpkg.com/tailwingdcss@^1.0/dist/tailwind.min.css">
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 60px;
+      height: 34px;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #2196F3;
+      -webkit-transition: .4s;
+      transition: .4s;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 26px;
+      width: 26px;
+      left: 30px;
+      bottom: 4px;
+      background-color: white;
+      -webkit-transition: .4s;
+      transition: .4s;
+    }
+    .slider2 {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      -webkit-transition: .4s;
+      transition: .4s;
+    }
+    .slider2:before {
+      position: absolute;
+      content: "";
+      height: 26px;
+      width: 26px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      -webkit-transition: .4s;
+      transition: .4s;
+    }
+
+    input:checked+.slider {
+      background-color: #ccc;
+    }
+    input:checked+.slider2 {
+      background-color: #2196F3;
+    }
+
+    input:focus+.slider {
+      box-shadow: 0 0 1px #2196F3;
+    }
+
+    input:checked+.slider:before {
+      -webkit-transform: translateX(-26px);
+      -ms-transform: translateX(-26px);
+      transform: translateX(-26px);
+      /* value:"ON" */
+    }
+    input:checked+.slider2:before {
+      -webkit-transform: translateX(26px);
+      -ms-transform: translateX(26px);
+      transform: translateX(26px);
+      /* value:"ON" */
+    }
+
+    /* Rounded sliders */
+    .slider.round {
+      border-radius: 34px;
+    }
+
+    .slider.round:before {
+      border-radius: 50%;
+    }
+    .slider2.round {
+      border-radius: 34px;
+    }
+
+    .slider2.round:before {
+      border-radius: 50%;
+    }
+
+  </style>
+  <style>
     #btn {
       margin-top: 10px;
       padding: 2px;
@@ -159,12 +260,23 @@
                 <h2>Control Air Pump</h2>
                 <form action="dashboard" method="post">
                   <!-- <input type="submit" class="inline-flex items-center bg-gray-800 border-0 py-1 px-3 focus:outline-none hover:bg-gray-700 rounded text-base mt-4 md:mt-0" value="ON"> -->
-                  <button name="AirPumpON" type="submit" id="btn" value="ON">
+                  <!-- <button name="AirPumpON" type="submit" id="btn" value="ON">
                     ON
                   </button>
                   <button name="AirPumpOFF" type="submit" id="btn-off" value="OFF">
                     OFF
-                  </button>
+                  </button> -->
+                  <% if(status == "ON"){%>
+                  <label class="switch">
+                    <input name="AirPumpON" id="switch" type="checkbox" onclick="submit()" value="OFF">
+                    <span class="slider round"></span>
+                  </label>
+                  <%}else{%>
+                    <label class="switch">
+                      <input name="AirPumpOFF" id="switch" type="checkbox" onclick="submit()" value="ON">
+                      <span class="slider2 round"></span>
+                    </label>
+                    <%}%>
                 </form>
               </div>
               <!-- <h2 class="title-font font-medium text-3xl text-white">
