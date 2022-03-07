@@ -1,1 +1,18 @@
-[]
+[
+  {
+    "StartHr": "15",
+    "StartMin": "34",
+    "StartSec": "41",
+    "EndHr": "15",
+    "EndMin": "34",
+    "EndSec": "53"
+  },
+  {
+    "StartHr": "15",
+    "StartMin": "35",
+    "StartSec": "05",
+    "EndHr": "15",
+    "EndMin": "35",
+    "EndSec": "35"
+  }
+]

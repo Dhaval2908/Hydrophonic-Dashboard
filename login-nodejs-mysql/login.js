@@ -1,7 +1,7 @@
 const mysql = require("mysql");
 const express = require("express");
 const bodyParser = require("body-parser");
- const encoder = bodyParser.urlencoded();
+const encoder = bodyParser.urlencoded();
 const logger = require("morgan")
 var path = require('path');
 var cookieParser = require('cookie-parser');
@@ -222,7 +222,6 @@ app.get("/analysis", isLoggedIn, function (req, res) {
         next()
       })
       .catch((error) => {
-        console.log("error::::::",error)
         res.redirect("/login");
       });
     
