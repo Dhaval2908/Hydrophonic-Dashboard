@@ -200,12 +200,11 @@ function onMessageArrived(r_message){
     }
     if(topic=="REEVA/HYDROPHONICS/34B4724F22C4/DHT12/Humidity")
     {
+     
       console.log(r_message.payloadString)
      document.getElementById("Humidity").innerHTML =r_message.payloadString;
      document.getElementById("EC").innerHTML ="53";
      document.getElementById("PH").innerHTML ="54";
-
-    }
      var today = new Date();
   var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
   document.getElementById("Date").innerHTML = date;
@@ -213,6 +212,9 @@ function onMessageArrived(r_message){
   document.getElementById("Time").innerHTML = time;
   console.log(date)
   console.log(time)
+
+    }
+
 }
 
   </script>

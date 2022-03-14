@@ -14,5 +14,45 @@
     "EndHr": "15",
     "EndMin": "35",
     "EndSec": "35"
+  },
+  {
+    "StartHr": "13",
+    "StartMin": "19",
+    "StartSec": "06",
+    "EndHr": "13",
+    "EndMin": "19",
+    "EndSec": "18"
+  },
+  {
+    "StartHr": "17",
+    "StartMin": "11",
+    "StartSec": "55",
+    "EndHr": "17",
+    "EndMin": "12",
+    "EndSec": "09"
+  },
+  {
+    "StartHr": "10",
+    "StartMin": "09",
+    "StartSec": "35",
+    "EndHr": "10",
+    "EndMin": "09",
+    "EndSec": "40"
+  },
+  {
+    "StartHr": "10",
+    "StartMin": "09",
+    "StartSec": "35",
+    "EndHr": "10",
+    "EndMin": "09",
+    "EndSec": "40"
+  },
+  {
+    "StartHr": "10",
+    "StartMin": "11",
+    "StartSec": "00",
+    "EndHr": "11",
+    "EndMin": "10",
+    "EndSec": "20"
   }
 ]
