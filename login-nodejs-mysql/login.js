@@ -199,18 +199,75 @@ app.post("/delete", isLoggedIn, function (req, res) {
     })
     res.redirect("/schedule")
 })
+
+
 app.get("/analysis", isLoggedIn, function (req, res) {
     
-  connection.query("select * from data", function (error, results, fields) {
-      console.log(results)
-      res.render("analysis",{
-          red :results
-          });
-  })
-  
+    connection.query("select * from data", function (error, results, fields) {
+        // console.log(results)
+        var Temp = [];
+        var Time = [];
+        var date = [];
+        var Humidity= [];
+        var PH= [];
+        var EC= [];
+
+        for(var i in results)
+        {
+            Temp.push([results [i].Temp]);
+            Time.push([results [i].Time]);
+            date.push([results [i].Date]);
+            Humidity.push([results [i].Humidity]);
+            PH.push([results [i].PH]);
+            EC.push([results [i].EC]);
+        }
+        res.render("analysis",{
+            Temp :'',
+            Time :'',
+            Date :'',
+            Humidity:'',
+            PH : '',
+            EC : ''
+            });
+    })
+    
 })
+app.post("/analysis", isLoggedIn, function (req, res) {
+    var Date = req.body.date.split('-');
+    var Date = Date[0]+'/'+Date[1]+'/'+Date[2]
+    // console.log("DATE",Date)
+    // 2022-03-12
+    // 2022/03/01
+    connection.query("select * from data where Date = ?",[Date], function (error, results, fields) {
+        // console.log(results)
+        var Temp = [];
+        var Time = [];
+        var date = [];
+        var Humidity= [];
+        var PH= [];
+        var EC= [];
 
-
+        for(var i in results)
+        {
+            Temp.push([results [i].Temp]);
+            Time.push([results [i].Time]);
+            date.push([results [i].Date]);
+            Humidity.push([results [i].Humidity]);
+            PH.push([results [i].PH]);
+            EC.push([results [i].EC]);
+        }
+        //  console.log(Temp)
+        res.render("analysis",{
+            Temp :Temp,
+            Time :Time,
+            Date :date,
+            Humidity:Humidity,
+            PH : PH,
+            EC : EC
+            });
+    })
+    
+})
   function isLoggedIn(req, res, next) {   //To verify an incoming token from client
     const sessionCookie = req.cookies.session || "";
    
