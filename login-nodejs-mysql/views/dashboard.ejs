@@ -214,6 +214,21 @@ function onMessageArrived(r_message){
   console.log(time)
 
     }
+     if(topic=="REEVA/HYDROPHONICS/34B4724F22C4/EC/EC")
+    {
+     
+      console.log(r_message.payloadString)
+     document.getElementById("EC").innerHTML =r_message.payloadString;
+   
+
+    }
+     if(topic=="REEVA/HYDROPHONICS/34B4724F22C4/PH/PH")
+    {
+     
+      console.log(r_message.payloadString)
+     document.getElementById("PH").innerHTML =r_message.payloadString;
+   
+    }
 
 }
 
