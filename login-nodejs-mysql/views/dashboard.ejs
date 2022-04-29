@@ -203,8 +203,7 @@ function onMessageArrived(r_message){
      
       console.log(r_message.payloadString)
      document.getElementById("Humidity").innerHTML =r_message.payloadString;
-     document.getElementById("EC").innerHTML ="53";
-     document.getElementById("PH").innerHTML ="54";
+  
      var today = new Date();
   var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
   document.getElementById("Date").innerHTML = date;
