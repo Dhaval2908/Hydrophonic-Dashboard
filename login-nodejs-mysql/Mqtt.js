@@ -40,7 +40,7 @@ cron.schedule(' */30 * * * *', () => {
 
 });
 
-var Temp, humidity
+var Temp, humidity,PH,EC
 function getdata() {
   client.publish(topic, "1", { qos: 0, retain: false }, (error) => {
     if (error) {
@@ -58,12 +58,22 @@ client.on('message', (topic, payload) => {
   else if (topic === "REEVA/HYDROPHONICS/34B4724F22C4/DHT12/Humidity") {
     humidity = payload.toString();
     console.log("Humidity",humidity)
-    savedata(Temp, humidity)
+   
+  }
+  else if (topic === "REEVA/HYDROPHONICS/34B4724F22C4/EC/EC") {
+    humidity = payload.toString();
+    console.log("EC",EC)
+   
+  }
+  else if (topic === "REEVA/HYDROPHONICS/34B4724F22C4/PH/PH") {
+    humidity = payload.toString();
+    console.log("PH",PH)
+    savedata(Temp, humidity,EC,PH)
   }
 ;
 })
 
-function savedata(Temp, humidity) {
+function savedata(Temp, humidity,EC,PH) {
   var date_ob = new Date();
   flag = 0
   let day = ("0" + date_ob.getDate()).slice(-2);
@@ -72,8 +82,7 @@ function savedata(Temp, humidity) {
   time = date_ob.getHours() + ':' + minute + ':' + date_ob.getSeconds();
   date = date_ob.getFullYear() + '/' + month + '/' + day;
 
-  var t2 = "53"
-  var t3 = "54"
+  
 
   if (Temp > 28) {
     Fan = "ON"
@@ -97,7 +106,7 @@ function savedata(Temp, humidity) {
   //Temp="22.0"
   
   var sql = "INSERT INTO data (Temp,Humidity,EC,PH,Time,Date,Fan) VALUES (?,?,?,?,?,?,?);"
-  con.query(sql, [Temp, humidity, t2, t3, time, date, Fan], function (err, result) {
+  con.query(sql, [Temp, humidity, EC, PH, time, date, Fan], function (err, result) {
     if (err) throw err;
     console.log("1 record inserted");
   });
